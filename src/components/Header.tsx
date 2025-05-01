@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 
 
 const menuItems = [
-    { name: "Matches", href: "/matches" },
     { name: "Swipe", href: "/swipe" },
+    { name: "Matches", href: "/matches" },
     { name: "Profile", href: "/profile" },
 ];
 
