@@ -81,7 +81,7 @@ export function HeroSection() {
               className="absolute inset-0 -z-20"
             >
               <img
-                src="https://ik.imagekit.io/lrigu76hy/tailark/night-background.jpg?updatedAt=1745733451120"
+                src="https://imagekit.io/tools/asset-public-link?detail=%7B%22name%22%3A%22screenshot_1746125504961.png%22%2C%22type%22%3A%22image%2Fpng%22%2C%22signedurl_expire%22%3A%222028-04-30T18%3A51%3A54.079Z%22%2C%22signedUrl%22%3A%22https%3A%2F%2Fmedia-hosting.imagekit.io%2Fe022dd03b965498c%2Fscreenshot_1746125504961.png%3FExpires%3D1840733514%26Key-Pair-Id%3DK2ZIVPTIP2VGHC%26Signature%3DVP75weKhSddN~UzIKQyuRgmbIJFMVsn5OKOO80hjkSjf4oAZu12WYM9KzQcIIkNbio6Gnh4R9zTx4u3oyWqo1j435A2LIzKKY2xUIhyZ0kDsDXsc5OAZN9vVIoZM3cjNL9pTK5tsXOh3GjH3q4~E7~ybE9DG4AoSPHItnAjmm1JJEhb0CQm7C~vXSqAuEa~nBFfzf4Q16hhsAvgF0~il~T3anTy26yBKBp43re37hD7kz~GcXR-Wp5lo2NpRk2wHlNYdu4KIlJPM~VILBPxiQ1ijQOZPEJ2rJTDO27jB~VLpTIg0NOIJz5VS109BDKSJLOpV6NFh8B1iY3zLO78c9A__%22%7D"
                 alt="code-themed background"
                 className="absolute inset-x-0 top-56 -z-20 hidden lg:top-32 dark:block"
                 width="3276"
