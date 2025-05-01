@@ -35,7 +35,7 @@ export function HeroSection() {
   const { data: session, status } = useSession();
   useEffect(() => {
    if (status === "authenticated" && session?.user) {
-     router.push("/");
+     router.push("/swipe");
    }
  }, [status, session]);
 
@@ -96,7 +96,7 @@ export function HeroSection() {
               <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                 <AnimatedGroup variants={transitionVariants}>
                   <Link
-                    href="/features"
+                    href="/profile"
                     className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-black/5 transition-all duration-300 dark:border-t-white/5 dark:shadow-zinc-950"
                   >
                     <span className="text-foreground text-sm">
@@ -185,7 +185,7 @@ export function HeroSection() {
                 <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
                   <img
                     className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block"
-                    src="https://tailark.com//_next/image?url=%2Fmail2.png&w=3840&q=75" // Replace with your app screenshot
+                    src="https://media-hosting.imagekit.io/8e058c0299b9442b/screenshot_1746115220436.png?Expires=1840723230&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Z8nwcq4BAtx-D91sNpz1g3tP3gvzzePo3WzEn2NQs~kQohqCeivgTZy~hqEZ5HYrrTRc3OOOZNnf1aOnwiE1A-OGyke~90vcZPYAu5G8gRKTGn4lCiT0EHsFi3Ihml24PFhjsfL-cYTGdih97vSpCvnEy-kSZoQ4sw4dm9LZY9ebN8QiF5mLw-BOXGRu9TMOv7Z0qHzdNqKnHvluhmxGa5N6jjqEYnY5YELEZnkkTsEVTOd1I4hQTBbl50Upzqu3TuImSeZmQgapWsMwxsjw8MzUURy0bH9OwS-sNE8kFDU-drznSaYCfuaZp3uLSD8bAseDfRxYCJZjttKueCiang__" // Replace with your app screenshot
                     alt="PairPal swipe interface"
                     width="2700"
                     height="1440"
@@ -201,6 +201,19 @@ export function HeroSection() {
               </div>
             </AnimatedGroup>
           </div>
+        </section>
+        <section className="bg-background pb-16 pt-16 md:pb-32">
+          <div className="group relative m-auto max-w-5xl px-6">
+            <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 duration-500 group-hover:scale-100 group-hover:opacity-100">
+              <Link
+                href="/community"
+                className="block text-sm duration-150 hover:opacity-75"
+              >
+                <span>Join Our Developer Community</span>
+                <ChevronRight className="ml-1 inline-block size-3" />
+              </Link>
+            </div>
+            </div>
         </section>
       </main>
     </>

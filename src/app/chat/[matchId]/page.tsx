@@ -220,7 +220,7 @@ export default function ChatPage() {
   
   if (error) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-10 pt-20 md:pt-20 pb-20 md:pb-0 ">
         <h2 className="text-xl font-semibold mb-4 text-red-500">Error</h2>
         <p className="mb-4">{error}</p>
         <Button onClick={() => router.push("/matches")}>
@@ -232,7 +232,7 @@ export default function ChatPage() {
   
   if (!matchData) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-10 pt-20 md:pt-20 pb-20 md:pb-0">
         <h2 className="text-xl font-semibold mb-4">Match Not Found</h2>
         <p className="text-muted-foreground mb-6">
           This match does not exist or you don't have access to it.
@@ -247,7 +247,7 @@ export default function ChatPage() {
   const { user } = matchData;
   
   return (
-    <div className="container mx-auto max-w-2xl">
+    <div className="container mx-auto max-w-2xl pt-20 md:pt-20 pb-20 md:pb-0">
       <div className="flex flex-col h-[calc(100vh-12rem)]">
         {/* Chat header */}
         <div className="flex items-center p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
