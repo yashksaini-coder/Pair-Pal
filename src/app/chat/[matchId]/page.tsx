@@ -5,18 +5,26 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
-import { User, Loader2, Send, Smile } from "lucide-react";
+import { User, Loader2, Send, Smile, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EmojiPicker } from "@/components/ui/emoji-picker";
-import { LinkPreview } from "@/components/ui/link-preview";
+import { LinkPreview } from "@/components/link-preview";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-// Helper to extract URLs from text
-function extractUrls(text: string) {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.match(urlRegex) || [];
+// Group reactions by emoji
+function groupReactions(reactions: any[]) {
+  return reactions.reduce((acc, reaction) => {
+    const key = reaction.emoji;
+    if (!acc[key]) {
+      acc[key] = { emoji: key, count: 0, users: [] };
+    }
+    acc[key].count++;
+    acc[key].users.push(reaction.userId);
+    return acc;
+  }, {});
 }
 
 export default function ChatPage() {
@@ -31,9 +39,11 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagePollingInterval = useRef<NodeJS.Timeout | null>(null);
+  const lastMessageRef = useRef<string | null>(null);
   
   // Redirect if not logged in
   useEffect(() => {
@@ -59,12 +69,20 @@ export default function ChatPage() {
     }
   }, [status, matchId]);
   
-  // Scroll to bottom when messages change
+  // Handle scrolling
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && shouldScrollToBottom) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, shouldScrollToBottom]);
+
+  // Check if user has scrolled up
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    const isScrolledToBottom = 
+      Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 50;
+    setShouldScrollToBottom(isScrolledToBottom);
+  };
   
   const fetchMatchData = async () => {
     try {
@@ -98,7 +116,19 @@ export default function ChatPage() {
       if (data.error) {
         setError(data.error);
       } else {
-        setMessages(data.messages);
+        // Check if there are new messages
+        const lastMessage = data.messages[data.messages.length - 1];
+        const hasNewMessages = lastMessage?._id !== lastMessageRef.current;
+        
+        if (hasNewMessages) {
+          setMessages(data.messages);
+          lastMessageRef.current = lastMessage?._id;
+          
+          // Only auto-scroll if we're already at the bottom or it's our message
+          if (shouldScrollToBottom || lastMessage?.senderId._id === session?.user?.id) {
+            setShouldScrollToBottom(true);
+          }
+        }
       }
     } catch (err) {
       setError("Failed to load messages");
@@ -217,6 +247,7 @@ export default function ChatPage() {
                 alt={user.username}
                 layout="fill"
                 objectFit="cover"
+                className="hover:scale-105 transition-transform"
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -224,16 +255,23 @@ export default function ChatPage() {
               </div>
             )}
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="font-medium">{user.username}</h2>
             {user.tagline && (
               <p className="text-xs text-muted-foreground">{user.tagline}</p>
             )}
           </div>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => router.push("/matches")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
         </div>
         
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4">
+        <ScrollArea className="flex-1 p-4" onScroll={handleScroll}>
           <div className="space-y-4">
             {messages.length === 0 ? (
               <div className="text-center py-8">
@@ -247,6 +285,8 @@ export default function ChatPage() {
                 const time = formatDistanceToNow(new Date(message.createdAt), {
                   addSuffix: true,
                 });
+                
+                const groupedReactions = groupReactions(message.reactions || []);
                 
                 return (
                   <div
@@ -265,6 +305,7 @@ export default function ChatPage() {
                               alt={message.senderId.username}
                               layout="fill"
                               objectFit="cover"
+                              className="hover:scale-105 transition-transform"
                             />
                           ) : (
                             <User className="w-full h-full p-1 text-muted-foreground" />
@@ -304,23 +345,33 @@ export default function ChatPage() {
                     </div>
 
                     {/* Reactions */}
-                    {message.reactions && message.reactions.length > 0 && (
+                    {Object.values(groupedReactions).length > 0 && (
                       <div className="flex flex-wrap gap-1 max-w-[80%]">
-                        {message.reactions.map((reaction: any, index: number) => (
-                          <button
-                            key={`${reaction.userId._id}-${reaction.emoji}-${index}`}
-                            onClick={() => handleReaction(message._id, reaction.emoji)}
-                            className={cn(
-                              "rounded-full px-2 py-1 text-xs flex items-center gap-1 transition-colors",
-                              "hover:bg-muted/80",
-                              reaction.userId._id === session?.user?.id && "bg-muted"
-                            )}
-                          >
-                            <span>{reaction.emoji}</span>
-                            <span className="text-muted-foreground">
-                              {reaction.userId.username}
-                            </span>
-                          </button>
+                        {Object.values(groupedReactions).map((reaction: any) => (
+                          <TooltipProvider key={reaction.emoji}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  onClick={() => handleReaction(message._id, reaction.emoji)}
+                                  className={cn(
+                                    "rounded-full px-2 py-1 text-xs flex items-center gap-1 transition-colors",
+                                    "hover:bg-muted/80",
+                                    reaction.users.some((u: any) => u._id === session?.user?.id) && "bg-muted"
+                                  )}
+                                >
+                                  <span>{reaction.emoji}</span>
+                                  <span className="text-muted-foreground">
+                                    {reaction.count}
+                                  </span>
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {reaction.users
+                                  .map((u: any) => u.username)
+                                  .join(", ")}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         ))}
                       </div>
                     )}
@@ -342,7 +393,7 @@ export default function ChatPage() {
         </ScrollArea>
         
         {/* Message input */}
-        <form onSubmit={sendMessage} className="p-4 border-t bg-background">
+        <form onSubmit={sendMessage} className="p-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex items-center gap-2">
             <EmojiPicker
               onEmojiSelect={(emoji: any) => {
@@ -356,7 +407,15 @@ export default function ChatPage() {
               className="flex-1"
               disabled={sending}
             />
-            <Button type="submit" size="icon" disabled={sending}>
+            <Button 
+              type="submit" 
+              size="icon" 
+              disabled={sending || !newMessage.trim()}
+              className={cn(
+                "transition-transform",
+                newMessage.trim() && "hover:scale-105"
+              )}
+            >
               {sending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (

@@ -5,12 +5,7 @@ import User from '@/models/User';
 import Match from '@/models/Match';
 import Message from '@/models/Message';
 import { getLinkPreview } from 'link-preview-js';
-
-// Helper to extract URLs from text
-function extractUrls(text: string) {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.match(urlRegex) || [];
-}
+import { extractUrls } from '@/lib/extractUrls';
 
 // Helper to get link preview data
 async function getLinkPreviewData(url: string) {
