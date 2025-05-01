@@ -1,9 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, MessageSquareDot, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Logo from "./Logo";
+
 
 const menuItems = [
     { name: "Matches", href: "/matches" },
@@ -42,7 +42,7 @@ export default function Header() {
                             aria-label="PairPal home"
                             className="flex items-center space-x-2"
                         >
-                            <Logo />
+                            <MessageSquareDot />
                             <span className="text-lg font-bold">PairPal</span>
                         </Link>
                         <button

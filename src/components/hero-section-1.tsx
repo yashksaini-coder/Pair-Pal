@@ -2,13 +2,13 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronRight, Menu, X } from "lucide-react";
+import { ArrowRight, ChevronRight, Menu, X, MessageSquareDot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Logo from "./Logo";
+
 const transitionVariants = {
   item: {
     hidden: {
@@ -245,7 +245,7 @@ const HeroHeader = () => {
                 aria-label="PairPal home"
                 className="flex items-center space-x-2"
               >
-                <Logo />
+                <MessageSquareDot />
                 <span className="text-lg font-bold">PairPal</span>
               </Link>
               <button

@@ -2,14 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, MessageSquareDot, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { User, Users, MessageCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/auth-buttons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Logo from "./Logo";
+
 const routes = [
   {
     label: "Swipe",
@@ -63,7 +63,7 @@ export function Navigation() {
                 aria-label="PairPal home"
                 className="flex items-center space-x-2"
               >
-                <Logo />
+                <MessageSquareDot />
                 <span className="text-xl font-bold">PairPal</span>
               </Link>
               <button

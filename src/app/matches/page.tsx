@@ -48,7 +48,7 @@ export default function MatchesPage() {
   
   if (status === "loading" || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] pt-20 md:pt-20 pb-20 md:pb-0">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
@@ -56,7 +56,7 @@ export default function MatchesPage() {
   
   if (error) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-10 pt-20 md:pt-20 pb-20 md:pb-0">
         <h2 className="text-xl font-semibold mb-4 text-red-500">Error</h2>
         <p className="mb-4">{error}</p>
         <Button onClick={fetchMatches}>Try Again</Button>
@@ -66,7 +66,7 @@ export default function MatchesPage() {
   
   if (matches.length === 0) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-10 pt-20 md:pt-20 pb-20 md:pb-0">
         <h2 className="text-xl font-semibold mb-4">No Matches Yet</h2>
         <p className="text-muted-foreground mb-6">
           You haven't matched with any developers yet. Head over to the Swipe page to find your coding partners!
@@ -77,7 +77,7 @@ export default function MatchesPage() {
   }
   
   return (
-    <div className="container mx-auto max-w-2xl px-2">
+    <div className="container mx-auto max-w-2xl px-2 pt-20 md:pt-20 pb-20 md:pb-0">
       <h1 className="text-2xl font-bold mb-6">Your Matches</h1>
       
       <div className="grid gap-4">

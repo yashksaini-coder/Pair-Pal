@@ -85,7 +85,7 @@ export default function ProfilePage() {
   
   if (status === "loading" || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] pt-20 md:pt-20 pb-20 md:pb-0">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
@@ -93,7 +93,7 @@ export default function ProfilePage() {
   
   if (error) {
     return (
-      <div className="container mx-auto max-w-3xl">
+      <div className="container mx-auto max-w-3xl pt-20 md:pt-20 pb-20 md:pb-0">
         <Card>
           <CardHeader>
             <CardTitle className="text-center text-red-500">Error</CardTitle>
@@ -111,7 +111,7 @@ export default function ProfilePage() {
   
   if (!profile) {
     return (
-      <div className="container mx-auto max-w-3xl">
+      <div className="container mx-auto max-w-3xl pt-20 md:pt-20 pb-20 md:pb-0">
         <Card>
           <CardHeader>
             <CardTitle className="text-center">Profile Not Found</CardTitle>
@@ -130,7 +130,7 @@ export default function ProfilePage() {
   }
   
   return (
-    <div className="container mx-auto max-w-3xl px-2 py-2">
+    <div className="container mx-auto max-w-3xl px-2 py-2 pt-20 md:pt-20 pb-20 md:pb-0">
       <Card className="mb-6">
         <CardHeader className="relative">
           <div className="absolute inset-0 h-32 bg-gradient-to-r from-primary/20 to-primary/10 rounded-t-lg"></div>
