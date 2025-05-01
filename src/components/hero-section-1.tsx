@@ -8,7 +8,7 @@ import { AnimatedGroup } from "@/components/ui/animated-group";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
+import Logo from "./Logo";
 const transitionVariants = {
   item: {
     hidden: {
@@ -35,7 +35,7 @@ export function HeroSection() {
   const { data: session, status } = useSession();
   useEffect(() => {
    if (status === "authenticated" && session?.user) {
-     router.push("/swipe");
+     router.push("/");
    }
  }, [status, session]);
 
@@ -118,7 +118,7 @@ export function HeroSection() {
                     Connect with Devs Who Code Like You
                   </h1>
                   <p className="mx-auto mt-8 max-w-2xl text-balance text-lg">
-                    DevSync matches developers based on GitHub profiles, tech
+                    PairPal matches developers based on GitHub profiles, tech
                     stacks, and project goals. Swipe, match, and build together.
                   </p>
                 </AnimatedGroup>
@@ -186,72 +186,20 @@ export function HeroSection() {
                   <img
                     className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block"
                     src="https://tailark.com//_next/image?url=%2Fmail2.png&w=3840&q=75" // Replace with your app screenshot
-                    alt="DevSync swipe interface"
+                    alt="PairPal swipe interface"
                     width="2700"
                     height="1440"
                   />
                   <img
                     className="z-2 border-border/25 aspect-15/8 relative rounded-2xl border dark:hidden"
                     src="https://tailark.com//_next/image?url=%2Fmail2.png&w=3840&q=75" // Replace with your app screenshot
-                    alt="DevSync swipe interface"
+                    alt="PairPal swipe interface"
                     width="2700"
                     height="1440"
                   />
                 </div>
               </div>
             </AnimatedGroup>
-          </div>
-        </section>
-        <section className="bg-background pb-16 pt-16 md:pb-32">
-          <div className="group relative m-auto max-w-5xl px-6">
-            <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 duration-500 group-hover:scale-100 group-hover:opacity-100">
-              <Link
-                href="/community"
-                className="block text-sm duration-150 hover:opacity-75"
-              >
-                <span>Join Our Developer Community</span>
-                <ChevronRight className="ml-1 inline-block size-3" />
-              </Link>
-            </div>
-            <div className="group-hover:blur-xs mx-auto mt-12 grid max-w-2xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
-              <div className="flex">
-                <img
-                  className="mx-auto h-5 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/github.svg"
-                  alt="GitHub Logo"
-                  height="20"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                <img
-                  className="mx-auto h-5 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/vercel.svg"
-                  alt="Vercel Logo"
-                  height="20"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                
-                <img
-                  className="mx-auto h-5 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/netlify.svg"
-                  alt="Netlify Logo"
-                  height="20"
-                  width="auto"
-                />
-              </div>
-              <div className="flex">
-                <img
-                  className="mx-auto h-5 w-fit dark:invert"
-                  src="https://html.tailus.io/blocks/customers/supabase.svg"
-                  alt="Supabase Logo"
-                  height="20"
-                  width="auto"
-                />
-              </div>
-            </div>
           </div>
         </section>
       </main>
@@ -261,9 +209,8 @@ export function HeroSection() {
 
 const menuItems = [
   { name: "Matches", href: "/matches" },
-  { name: "Projects", href: "/projects" },
+  { name: "Swipe", href: "/swipe" },
   { name: "Profile", href: "/profile" },
-  { name: "Community", href: "/community" },
 ];
 
 const HeroHeader = () => {
@@ -295,11 +242,11 @@ const HeroHeader = () => {
             <div className="flex w-full justify-between lg:w-auto">
               <Link
                 href="/"
-                aria-label="DevSync home"
+                aria-label="PairPal home"
                 className="flex items-center space-x-2"
               >
                 <Logo />
-                <span className="text-lg font-bold">DevSync</span>
+                <span className="text-lg font-bold">PairPal</span>
               </Link>
               <button
                 onClick={() => setMenuState(!menuState)}
@@ -376,34 +323,3 @@ const HeroHeader = () => {
     </header>
   );
 };
-
-const Logo = ({ className }: { className?: string }) => {
-    return (
-        <svg
-            viewBox="0 0 18 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className={cn('h-5 w-auto', className)}>
-            <path
-                d="M3 0H5V18H3V0ZM13 0H15V18H13V0ZM18 3V5H0V3H18ZM0 15V13H18V15H0Z"
-                fill="url(#logo-gradient)"
-            />
-           
-            <defs>
-                <linearGradient
-                    id="logo-gradient"
-                    x1="10"
-                    y1="0"
-                    x2="10"
-                    y2="20"
-                    gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#9B99FE" />
-                    <stop
-                        offset="1"
-                        stopColor="#2BC8B7"
-                    />
-                </linearGradient>
-            </defs>
-        </svg>
-    );
-}

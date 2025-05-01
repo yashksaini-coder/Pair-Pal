@@ -8,8 +8,8 @@ import { SessionProvider } from '@/components/session-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'DevSync - Connect with Developers',
-  description: 'Find your perfect coding partner with DevSync',
+  title: 'PairPal - Connect with Developers',
+  description: 'Find your perfect coding partner with PairPal',
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
           >
             <div className="relative min-h-screen pb-16 md:pb-0">
               <Navigation/>
-              <main className="">
+              <main className="pt-20 md:pt-20 pb-20 md:pb-0">
                 {children}
               </main>
             </div>

@@ -41,7 +41,7 @@ export function Navigation() {
     <header className="border-b">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold">DevSync</span>
+          <span className="text-xl font-bold">PairPal</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6">
