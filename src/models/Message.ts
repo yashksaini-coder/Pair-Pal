@@ -1,40 +1,54 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IMessage extends Document {
-  matchId: mongoose.Types.ObjectId;
-  senderId: mongoose.Types.ObjectId;
-  receiverId: mongoose.Types.ObjectId;
-  content: string;
-  createdAt: Date;
-}
-
-const messageSchema = new Schema<IMessage>(
-  {
-    matchId: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'Match', 
-      required: true 
-    },
-    senderId: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'User', 
-      required: true 
-    },
-    receiverId: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'User', 
-      required: true 
-    },
-    content: { 
-      type: String, 
-      required: true 
-    }
+const messageSchema = new mongoose.Schema({
+  matchId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Match',
+    required: true
   },
-  { 
-    timestamps: true 
+  senderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  receiverId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  reactions: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    emoji: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  linkPreview: {
+    url: String,
+    title: String,
+    description: String,
+    image: String
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
-);
+});
 
-const Message = mongoose.models.Message || mongoose.model<IMessage>('Message', messageSchema);
+// Create indexes
+messageSchema.index({ matchId: 1, createdAt: 1 });
+messageSchema.index({ senderId: 1, receiverId: 1 });
 
-export default Message;
+export default mongoose.models.Message || mongoose.model('Message', messageSchema);

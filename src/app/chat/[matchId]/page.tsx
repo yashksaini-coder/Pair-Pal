@@ -5,11 +5,27 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
-import { User, Loader2, Send } from "lucide-react";
+import { User, Loader2, Send, Smile, ArrowLeft, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { EmojiPicker } from "@/components/ui/emoji-picker";
+import { LinkPreview } from "@/components/link-preview";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+
+// Group reactions by emoji
+function groupReactions(reactions: any[]) {
+  return reactions.reduce((acc, reaction) => {
+    const key = reaction.emoji;
+    if (!acc[key]) {
+      acc[key] = { emoji: key, count: 0, users: [] };
+    }
+    acc[key].count++;
+    acc[key].users.push(reaction.userId);
+    return acc;
+  }, {});
+}
 
 export default function ChatPage() {
   const { data: session, status } = useSession();
@@ -23,9 +39,11 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagePollingInterval = useRef<NodeJS.Timeout | null>(null);
+  const lastMessageRef = useRef<string | null>(null);
   
   // Redirect if not logged in
   useEffect(() => {
@@ -51,12 +69,20 @@ export default function ChatPage() {
     }
   }, [status, matchId]);
   
-  // Scroll to bottom when messages change
+  // Handle scrolling
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && shouldScrollToBottom) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, shouldScrollToBottom]);
+
+  // Check if user has scrolled up
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    const isScrolledToBottom = 
+      Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 50;
+    setShouldScrollToBottom(isScrolledToBottom);
+  };
   
   const fetchMatchData = async () => {
     try {
@@ -90,7 +116,19 @@ export default function ChatPage() {
       if (data.error) {
         setError(data.error);
       } else {
+        // Check if there are new messages
+        const lastMessage = data.messages[data.messages.length - 1];
+        const hasNewMessages = lastMessage?._id !== lastMessageRef.current;
+        
+        if (hasNewMessages) {
         setMessages(data.messages);
+          lastMessageRef.current = lastMessage?._id;
+          
+          // Only auto-scroll if we're already at the bottom or it's our message
+          if (shouldScrollToBottom || lastMessage?.senderId.username === session?.user?.username) {
+            setShouldScrollToBottom(true);
+          }
+        }
       }
     } catch (err) {
       setError("Failed to load messages");
@@ -131,6 +169,46 @@ export default function ChatPage() {
       setSending(false);
     }
   };
+
+  const handleReaction = async (messageId: string, emoji: string) => {
+    try {
+      const res = await fetch("/api/messages", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messageId,
+          emoji,
+        }),
+      });
+      
+      const data = await res.json();
+      
+      if (data.error) {
+        setError(data.error);
+      } else {
+        // Update the specific message with new reaction data
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg._id === messageId ? {
+              ...msg,
+              reactions: data.message.reactions
+            } : msg
+          )
+        );
+      }
+    } catch (err) {
+      setError("Failed to add reaction");
+    }
+  };
+  
+  // Add console log to check session data
+  useEffect(() => {
+    if (session?.user) {
+      console.log("Session user:", session.user);
+    }
+  }, [session]);
   
   if (status === "loading" || loading) {
     return (
@@ -172,7 +250,7 @@ export default function ChatPage() {
     <div className="container mx-auto max-w-2xl">
       <div className="flex flex-col h-[calc(100vh-12rem)]">
         {/* Chat header */}
-        <div className="flex items-center p-4 border-b">
+        <div className="flex items-center p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
           <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">
             {user.avatarUrl ? (
               <Image
@@ -180,23 +258,31 @@ export default function ChatPage() {
                 alt={user.username}
                 layout="fill"
                 objectFit="cover"
+                className="hover:scale-105 transition-transform"
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center">
-                {user.username.charAt(0).toUpperCase()}
+                <User className="h-6 w-6" />
               </div>
             )}
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="font-medium">{user.username}</h2>
             {user.tagline && (
               <p className="text-xs text-muted-foreground">{user.tagline}</p>
             )}
           </div>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => router.push("/matches")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
         </div>
         
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4">
+        <ScrollArea className="flex-1 p-4" onScroll={handleScroll}>
           <div className="space-y-4">
             {messages.length === 0 ? (
               <div className="text-center py-8">
@@ -206,20 +292,30 @@ export default function ChatPage() {
               </div>
             ) : (
               messages.map((message) => {
-                const isCurrentUser = message.senderId._id === session?.user?.id
+                // Debug log to check message sender and current user
+                console.log("Message sender:", message.senderId.username);
+                console.log("Current user:", session?.user?.username);
+                
+                const isCurrentUser = session?.user?.username === message.senderId.username;
+                
                 const time = formatDistanceToNow(new Date(message.createdAt), {
                   addSuffix: true,
                 });
+                
+                const groupedReactions = groupReactions(message.reactions || []);
                 
                 return (
                   <div
                     key={message._id}
                     className={cn(
-                      "flex",
-                      isCurrentUser ? "justify-end" : "justify-start"
+                      "flex flex-col gap-2",
+                      isCurrentUser ? "items-end" : "items-start"
                     )}
                   >
-                    <div className="flex items-end gap-2 max-w-[80%]">
+                    <div className={cn(
+                      "flex items-end gap-2 group max-w-[80%]",
+                      isCurrentUser ? "flex-row-reverse" : "flex-row"
+                    )}>
                       {!isCurrentUser && (
                         <div className="relative w-8 h-8 rounded-full overflow-hidden">
                           {message.senderId.avatarUrl ? (
@@ -235,27 +331,91 @@ export default function ChatPage() {
                         </div>
                       )}
                       
-                      <div
-                        className={cn(
-                          "rounded-lg p-3",
-                          isCurrentUser
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted"
+                      <div className="space-y-2">
+                        {!isCurrentUser && (
+                          <p className="text-xs font-medium ml-1">
+                            {message.senderId.username}
+                          </p>
                         )}
-                      >
-                        <p>{message.content}</p>
-                        <p
+                        <div
                           className={cn(
-                            "text-xs mt-1",
+                            "rounded-2xl px-4 py-2 relative group",
                             isCurrentUser
-                              ? "text-primary-foreground/70"
-                              : "text-muted-foreground"
+                              ? "bg-primary text-primary-foreground rounded-tr-none" 
+                              : "bg-muted rounded-tl-none"
                           )}
                         >
-                          {time}
-                        </p>
+                          <p className="break-words">{message.content}</p>
+                          <div className={cn(
+                            "absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity",
+                            isCurrentUser ? "-left-10" : "-right-10"
+                          )}>
+                            <EmojiPicker 
+                              onEmojiSelect={(emoji: any) => 
+                                handleReaction(message._id, emoji.native)
+                              } 
+                            />
+                          </div>
+                        </div>
+
+                        {/* Link Preview */}
+                        {message.linkPreview && (
+                          <LinkPreview
+                            url={message.linkPreview.url}
+                            title={message.linkPreview.title}
+                            description={message.linkPreview.description}
+                            image={message.linkPreview.image}
+                          />
+                        )}
                       </div>
                     </div>
+
+                    {/* Reactions */}
+                    {Object.values(groupedReactions).length > 0 && (
+                      <div className={cn(
+                        "flex flex-wrap gap-1",
+                        isCurrentUser ? "justify-end" : "justify-start",
+                        "max-w-[80%]"
+                      )}>
+                        {Object.values(groupedReactions).map((reaction: any) => (
+                          <TooltipProvider key={reaction.emoji}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  onClick={() => handleReaction(message._id, reaction.emoji)}
+                                  className={cn(
+                                    "rounded-full px-2 py-1 text-xs flex items-center gap-1.5 transition-all",
+                                    "hover:bg-primary/10",
+                                    reaction.users.some((u: any) => u.username === session?.user?.username) 
+                                      ? "bg-primary/15" 
+                                      : "bg-muted/50"
+                                  )}
+                                >
+                                  <span>{reaction.emoji}</span>
+                                  <span className="text-muted-foreground">
+                                    {reaction.count}
+                                  </span>
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {reaction.users
+                                  .map((u: any) => u.username)
+                                  .join(", ")}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ))}
+                      </div>
+                    )}
+
+                    <span
+                      className={cn(
+                        "text-xs text-muted-foreground",
+                        isCurrentUser ? "text-right" : "text-left"
+                      )}
+                    >
+                      {time}
+                    </span>
                   </div>
                 );
               })
@@ -265,15 +425,29 @@ export default function ChatPage() {
         </ScrollArea>
         
         {/* Message input */}
-        <form onSubmit={sendMessage} className="p-4 border-t">
-          <div className="flex gap-2">
+        <form onSubmit={sendMessage} className="p-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex items-center gap-2">
+            <EmojiPicker
+              onEmojiSelect={(emoji: any) => {
+                setNewMessage((prev) => prev + emoji.native);
+              }}
+            />
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
               className="flex-1"
+              disabled={sending}
             />
-            <Button type="submit" disabled={sending || !newMessage.trim()}>
+            <Button 
+              type="submit" 
+              size="icon" 
+              disabled={sending || !newMessage.trim()}
+              className={cn(
+                "transition-transform",
+                newMessage.trim() && "hover:scale-105"
+              )}
+            >
               {sending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
