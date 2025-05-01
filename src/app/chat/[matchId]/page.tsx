@@ -125,7 +125,7 @@ export default function ChatPage() {
           lastMessageRef.current = lastMessage?._id;
           
           // Only auto-scroll if we're already at the bottom or it's our message
-          if (shouldScrollToBottom || lastMessage?.senderId.username === session?.user?.name) {
+          if (shouldScrollToBottom || lastMessage?.senderId.username === session?.user?.username) {
             setShouldScrollToBottom(true);
           }
         }
@@ -202,6 +202,13 @@ export default function ChatPage() {
       setError("Failed to add reaction");
     }
   };
+  
+  // Add console log to check session data
+  useEffect(() => {
+    if (session?.user) {
+      console.log("Session user:", session.user);
+    }
+  }, [session]);
   
   if (status === "loading" || loading) {
     return (
@@ -285,7 +292,12 @@ export default function ChatPage() {
               </div>
             ) : (
               messages.map((message) => {
-                const isCurrentUser = message.senderId.username === session?.user?.name;
+                // Debug log to check message sender and current user
+                console.log("Message sender:", message.senderId.username);
+                console.log("Current user:", session?.user?.username);
+                
+                const isCurrentUser = session?.user?.username === message.senderId.username;
+                
                 const time = formatDistanceToNow(new Date(message.createdAt), {
                   addSuffix: true,
                 });
@@ -374,7 +386,7 @@ export default function ChatPage() {
                                   className={cn(
                                     "rounded-full px-2 py-1 text-xs flex items-center gap-1.5 transition-all",
                                     "hover:bg-primary/10",
-                                    reaction.users.some((u: any) => u.username === session?.user?.name) 
+                                    reaction.users.some((u: any) => u.username === session?.user?.username) 
                                       ? "bg-primary/15" 
                                       : "bg-muted/50"
                                   )}
