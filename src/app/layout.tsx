@@ -28,7 +28,7 @@ export default function RootLayout({
           >
             <div className="relative min-h-screen pb-16 md:pb-0">
               <Navigation/>
-              <main className="pt-20 md:pt-20 pb-20 md:pb-0">
+              <main className="">
                 {children}
               </main>
             </div>

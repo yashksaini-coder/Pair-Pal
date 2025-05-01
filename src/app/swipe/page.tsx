@@ -12,7 +12,7 @@ import { MatchNotification } from "@/components/match-notification";
 export default function SwipePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [profiles, setProfiles] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -20,20 +20,20 @@ export default function SwipePage() {
   const [showMatchNotification, setShowMatchNotification] = useState(false);
   const [matchedUser, setMatchedUser] = useState<any>(null);
   const [matchId, setMatchId] = useState<string | null>(null);
-  
+
   // Fetch profiles
   useEffect(() => {
     if (status === "authenticated") {
       fetchProfiles();
     }
   }, [status]);
-  
+
   const fetchProfiles = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/profiles");
       const data = await res.json();
-      
+
       if (data.error) {
         setError(data.error);
       } else {
@@ -45,7 +45,7 @@ export default function SwipePage() {
       setLoading(false);
     }
   };
-  
+
   const handleSwipe = async (id: string, liked: boolean) => {
     try {
       const res = await fetch("/api/swipe", {
@@ -55,9 +55,9 @@ export default function SwipePage() {
         },
         body: JSON.stringify({ targetId: id, liked }),
       });
-      
+
       const data = await res.json();
-      
+
       // Check if there's a match
       if (data.matchCreated) {
         // Find the profile that matched
@@ -66,27 +66,27 @@ export default function SwipePage() {
         setMatchId(data.matchId);
         setShowMatchNotification(true);
       }
-      
+
       // Move to next profile
       setCurrentIndex((prev) => prev + 1);
-      
+
       // If we're running out of profiles, fetch more
       if (currentIndex + 1 >= profiles.length - 2) {
         fetchProfiles();
       }
-      
+
     } catch (err) {
       setError("Failed to record swipe");
     }
   };
-  
+
   const handleViewMatch = () => {
     setShowMatchNotification(false);
     if (matchId) {
       router.push(`/chat/${matchId}`);
     }
   };
-  
+
   if (status === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -94,20 +94,20 @@ export default function SwipePage() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-8 pt-20 md:pt-20 pb-20 md:pb-0 px-4 md:px-8">
         <h2 className="text-xl font-semibold mb-4 text-red-500">Error</h2>
         <p className="mb-4">{error}</p>
         <Button onClick={fetchProfiles}>Try Again</Button>
       </div>
     );
   }
-  
+
   if (profiles.length === 0) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-8 pt-20 md:pt-20 pb-20 md:pb-0 px-4 md:px-8">
         <h2 className="text-xl font-semibold mb-4">No Profiles Available</h2>
         <p className="text-muted-foreground mb-6">
           We couldn't find any more profiles for you to match with right now.
@@ -119,10 +119,10 @@ export default function SwipePage() {
       </div>
     );
   }
-  
+
   if (currentIndex >= profiles.length) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-8 pt-20 md:pt-20 pb-20 md:pb-0 px-4 md:px-8">
         <h2 className="text-xl font-semibold mb-4">No More Profiles</h2>
         <p className="text-muted-foreground mb-6">
           You've seen all available profiles. Check back later for more potential matches!
@@ -131,27 +131,27 @@ export default function SwipePage() {
       </div>
     );
   }
-  
+
   return (
-    <div className="container mx-auto max-w-lg py-10 px-2">
+    <div className="container mx-auto pt-20 max-w-lg py-10 px-4 md:px-8">
       <h1 className="md:text-2xl font-bold text-center md:mb-8 mb-4">
         Find Your Coding Partner
       </h1>
-      
+
       <div className="relative h-[600px]">
         {profiles.map((profile, index) => (
-          <div 
-            key={profile._id} 
+          <div
+            key={profile._id}
             className={index === currentIndex ? "block" : "hidden"}
           >
-            <SwipeCard 
-              profile={profile} 
-              onSwipe={handleSwipe} 
+            <SwipeCard
+              profile={profile}
+              onSwipe={handleSwipe}
             />
           </div>
         ))}
       </div>
-      
+
       <MatchNotification
         isOpen={showMatchNotification}
         username={matchedUser?.username || ""}

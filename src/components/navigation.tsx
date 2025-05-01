@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/auth-buttons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
+import Logo from "./Logo";
 const routes = [
   {
     label: "Swipe",
@@ -56,13 +56,14 @@ export function Navigation() {
               "bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5"
           )}
         >
-          <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
+          <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 pb-10 lg:gap-0 lg:py-4">
             <div className="flex w-full justify-between lg:w-auto">
               <Link
                 href="/"
                 aria-label="PairPal home"
                 className="flex items-center space-x-2"
               >
+                <Logo />
                 <span className="text-xl font-bold">PairPal</span>
               </Link>
               <button
@@ -83,16 +84,16 @@ export function Navigation() {
                       ? pathname === "/matches" || pathname.startsWith("/chat")
                       : pathname === route.href;
                   return (
-                    <li key={route.href}>
+                    <li key={route.href} className="min-w-[100px]">
                       <Link
                         href={route.href}
                         className={cn(
-                          "flex items-center justify-center gap-2 text-muted-foreground hover:text-accent-foreground block duration-150",
-                          active && "text-foreground font-semibold"
+                          "flex items-center justify-center gap-2 text-muted-foreground hover:text-accent-foreground px-4 py-2 rounded-md duration-150 w-full",
+                          active && "text-foreground font-semibold bg-accent/10"
                         )}
                       >
-                        <route.icon className="h-5 w-5" />
-                        <span className="leading-none align-middle">{route.label}</span>
+                        <route.icon className="h-5 w-5 shrink-0" />
+                        <span className="leading-none">{route.label}</span>
                       </Link>
                     </li>
                   );
