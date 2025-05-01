@@ -125,7 +125,7 @@ export default function ChatPage() {
           lastMessageRef.current = lastMessage?._id;
           
           // Only auto-scroll if we're already at the bottom or it's our message
-          if (shouldScrollToBottom || lastMessage?.senderId._id === session?.user?.id) {
+          if (shouldScrollToBottom || lastMessage?.senderId.username === session?.user?.name) {
             setShouldScrollToBottom(true);
           }
         }
@@ -285,7 +285,7 @@ export default function ChatPage() {
               </div>
             ) : (
               messages.map((message) => {
-                const isCurrentUser = message.senderId._id === session?.user?.id;
+                const isCurrentUser = message.senderId.username === session?.user?.name;
                 const time = formatDistanceToNow(new Date(message.createdAt), {
                   addSuffix: true,
                 });
@@ -301,9 +301,8 @@ export default function ChatPage() {
                     )}
                   >
                     <div className={cn(
-                      "flex items-end gap-2 group",
-                      isCurrentUser ? "flex-row-reverse" : "flex-row",
-                      "max-w-[80%]"
+                      "flex items-end gap-2 group max-w-[80%]",
+                      isCurrentUser ? "flex-row-reverse" : "flex-row"
                     )}>
                       {!isCurrentUser && (
                         <div className="relative w-8 h-8 rounded-full overflow-hidden">
@@ -321,15 +320,20 @@ export default function ChatPage() {
                       )}
                       
                       <div className="space-y-2">
+                        {!isCurrentUser && (
+                          <p className="text-xs font-medium ml-1">
+                            {message.senderId.username}
+                          </p>
+                        )}
                         <div
                           className={cn(
-                            "rounded-lg p-3 relative group",
-                            isCurrentUser
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted"
+                            "rounded-2xl px-4 py-2 relative group",
+                            isCurrentUser 
+                              ? "bg-primary text-primary-foreground rounded-tr-none" 
+                              : "bg-muted rounded-tl-none"
                           )}
                         >
-                          <p>{message.content}</p>
+                          <p className="break-words">{message.content}</p>
                           <div className={cn(
                             "absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity",
                             isCurrentUser ? "-left-10" : "-right-10"
@@ -368,9 +372,11 @@ export default function ChatPage() {
                                 <button
                                   onClick={() => handleReaction(message._id, reaction.emoji)}
                                   className={cn(
-                                    "rounded-full px-2 py-1 text-xs flex items-center gap-1 transition-colors",
-                                    "hover:bg-muted/80",
-                                    reaction.users.some((u: any) => u._id === session?.user?.id) && "bg-muted"
+                                    "rounded-full px-2 py-1 text-xs flex items-center gap-1.5 transition-all",
+                                    "hover:bg-primary/10",
+                                    reaction.users.some((u: any) => u.username === session?.user?.name) 
+                                      ? "bg-primary/15" 
+                                      : "bg-muted/50"
                                   )}
                                 >
                                   <span>{reaction.emoji}</span>
