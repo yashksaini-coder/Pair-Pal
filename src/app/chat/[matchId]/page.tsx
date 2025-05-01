@@ -121,7 +121,7 @@ export default function ChatPage() {
         const hasNewMessages = lastMessage?._id !== lastMessageRef.current;
         
         if (hasNewMessages) {
-          setMessages(data.messages);
+        setMessages(data.messages);
           lastMessageRef.current = lastMessage?._id;
           
           // Only auto-scroll if we're already at the bottom or it's our message
@@ -340,7 +340,7 @@ export default function ChatPage() {
                         <div
                           className={cn(
                             "rounded-2xl px-4 py-2 relative group",
-                            isCurrentUser 
+                            isCurrentUser
                               ? "bg-primary text-primary-foreground rounded-tr-none" 
                               : "bg-muted rounded-tl-none"
                           )}
