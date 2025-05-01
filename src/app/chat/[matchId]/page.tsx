@@ -5,11 +5,19 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
-import { User, Loader2, Send } from "lucide-react";
+import { User, Loader2, Send, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { EmojiPicker } from "@/components/ui/emoji-picker";
+import { LinkPreview } from "@/components/ui/link-preview";
 import { cn } from "@/lib/utils";
+
+// Helper to extract URLs from text
+function extractUrls(text: string) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.match(urlRegex) || [];
+}
 
 export default function ChatPage() {
   const { data: session, status } = useSession();
@@ -131,6 +139,35 @@ export default function ChatPage() {
       setSending(false);
     }
   };
+
+  const handleReaction = async (messageId: string, emoji: string) => {
+    try {
+      const res = await fetch("/api/messages", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messageId,
+          emoji,
+        }),
+      });
+      
+      const data = await res.json();
+      
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === messageId ? data.message : msg
+          )
+        );
+      }
+    } catch (err) {
+      setError("Failed to add reaction");
+    }
+  };
   
   if (status === "loading" || loading) {
     return (
@@ -172,7 +209,7 @@ export default function ChatPage() {
     <div className="container mx-auto max-w-2xl">
       <div className="flex flex-col h-[calc(100vh-12rem)]">
         {/* Chat header */}
-        <div className="flex items-center p-4 border-b">
+        <div className="flex items-center p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
           <div className="relative w-10 h-10 rounded-full overflow-hidden mr-3">
             {user.avatarUrl ? (
               <Image
@@ -206,7 +243,7 @@ export default function ChatPage() {
               </div>
             ) : (
               messages.map((message) => {
-                const isCurrentUser = message.senderId._id === session?.user?.id
+                const isCurrentUser = message.senderId._id === session?.user?.id;
                 const time = formatDistanceToNow(new Date(message.createdAt), {
                   addSuffix: true,
                 });
@@ -215,11 +252,11 @@ export default function ChatPage() {
                   <div
                     key={message._id}
                     className={cn(
-                      "flex",
-                      isCurrentUser ? "justify-end" : "justify-start"
+                      "flex flex-col gap-2",
+                      isCurrentUser ? "items-end" : "items-start"
                     )}
                   >
-                    <div className="flex items-end gap-2 max-w-[80%]">
+                    <div className="flex items-end gap-2 max-w-[80%] group">
                       {!isCurrentUser && (
                         <div className="relative w-8 h-8 rounded-full overflow-hidden">
                           {message.senderId.avatarUrl ? (
@@ -235,27 +272,67 @@ export default function ChatPage() {
                         </div>
                       )}
                       
-                      <div
-                        className={cn(
-                          "rounded-lg p-3",
-                          isCurrentUser
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted"
-                        )}
-                      >
-                        <p>{message.content}</p>
-                        <p
+                      <div className="space-y-2">
+                        <div
                           className={cn(
-                            "text-xs mt-1",
+                            "rounded-lg p-3 relative group",
                             isCurrentUser
-                              ? "text-primary-foreground/70"
-                              : "text-muted-foreground"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted"
                           )}
                         >
-                          {time}
-                        </p>
+                          <p>{message.content}</p>
+                          <div className="absolute -right-10 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <EmojiPicker 
+                              onEmojiSelect={(emoji: any) => 
+                                handleReaction(message._id, emoji.native)
+                              } 
+                            />
+                          </div>
+                        </div>
+
+                        {/* Link Preview */}
+                        {message.linkPreview && (
+                          <LinkPreview
+                            url={message.linkPreview.url}
+                            title={message.linkPreview.title}
+                            description={message.linkPreview.description}
+                            image={message.linkPreview.image}
+                          />
+                        )}
                       </div>
                     </div>
+
+                    {/* Reactions */}
+                    {message.reactions && message.reactions.length > 0 && (
+                      <div className="flex flex-wrap gap-1 max-w-[80%]">
+                        {message.reactions.map((reaction: any, index: number) => (
+                          <button
+                            key={`${reaction.userId._id}-${reaction.emoji}-${index}`}
+                            onClick={() => handleReaction(message._id, reaction.emoji)}
+                            className={cn(
+                              "rounded-full px-2 py-1 text-xs flex items-center gap-1 transition-colors",
+                              "hover:bg-muted/80",
+                              reaction.userId._id === session?.user?.id && "bg-muted"
+                            )}
+                          >
+                            <span>{reaction.emoji}</span>
+                            <span className="text-muted-foreground">
+                              {reaction.userId.username}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <span
+                      className={cn(
+                        "text-xs text-muted-foreground",
+                        isCurrentUser ? "text-right" : "text-left"
+                      )}
+                    >
+                      {time}
+                    </span>
                   </div>
                 );
               })
@@ -265,15 +342,21 @@ export default function ChatPage() {
         </ScrollArea>
         
         {/* Message input */}
-        <form onSubmit={sendMessage} className="p-4 border-t">
-          <div className="flex gap-2">
+        <form onSubmit={sendMessage} className="p-4 border-t bg-background">
+          <div className="flex items-center gap-2">
+            <EmojiPicker
+              onEmojiSelect={(emoji: any) => {
+                setNewMessage((prev) => prev + emoji.native);
+              }}
+            />
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
               className="flex-1"
+              disabled={sending}
             />
-            <Button type="submit" disabled={sending || !newMessage.trim()}>
+            <Button type="submit" size="icon" disabled={sending}>
               {sending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
