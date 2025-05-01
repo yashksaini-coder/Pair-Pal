@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
-import { User, Loader2, Send, Smile, ArrowLeft } from "lucide-react";
+import { User, Loader2, Send, Smile, ArrowLeft, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -188,9 +188,13 @@ export default function ChatPage() {
       if (data.error) {
         setError(data.error);
       } else {
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg._id === messageId ? data.message : msg
+        // Update the specific message with new reaction data
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg._id === messageId ? {
+              ...msg,
+              reactions: data.message.reactions
+            } : msg
           )
         );
       }
@@ -251,7 +255,7 @@ export default function ChatPage() {
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center">
-                {user.username.charAt(0).toUpperCase()}
+                <User className="h-6 w-6" />
               </div>
             )}
           </div>
@@ -296,7 +300,11 @@ export default function ChatPage() {
                       isCurrentUser ? "items-end" : "items-start"
                     )}
                   >
-                    <div className="flex items-end gap-2 max-w-[80%] group">
+                    <div className={cn(
+                      "flex items-end gap-2 group",
+                      isCurrentUser ? "flex-row-reverse" : "flex-row",
+                      "max-w-[80%]"
+                    )}>
                       {!isCurrentUser && (
                         <div className="relative w-8 h-8 rounded-full overflow-hidden">
                           {message.senderId.avatarUrl ? (
@@ -305,7 +313,6 @@ export default function ChatPage() {
                               alt={message.senderId.username}
                               layout="fill"
                               objectFit="cover"
-                              className="hover:scale-105 transition-transform"
                             />
                           ) : (
                             <User className="w-full h-full p-1 text-muted-foreground" />
@@ -323,7 +330,10 @@ export default function ChatPage() {
                           )}
                         >
                           <p>{message.content}</p>
-                          <div className="absolute -right-10 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className={cn(
+                            "absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity",
+                            isCurrentUser ? "-left-10" : "-right-10"
+                          )}>
                             <EmojiPicker 
                               onEmojiSelect={(emoji: any) => 
                                 handleReaction(message._id, emoji.native)
@@ -346,7 +356,11 @@ export default function ChatPage() {
 
                     {/* Reactions */}
                     {Object.values(groupedReactions).length > 0 && (
-                      <div className="flex flex-wrap gap-1 max-w-[80%]">
+                      <div className={cn(
+                        "flex flex-wrap gap-1",
+                        isCurrentUser ? "justify-end" : "justify-start",
+                        "max-w-[80%]"
+                      )}>
                         {Object.values(groupedReactions).map((reaction: any) => (
                           <TooltipProvider key={reaction.emoji}>
                             <Tooltip>
