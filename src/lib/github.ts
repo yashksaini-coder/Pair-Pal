@@ -43,7 +43,7 @@ export async function fetchGitHubUserData(accessToken: string) {
       const { data } = await octokit.request('GET /user/repos', {
         sort: 'updated',
         per_page: 10,
-        type: 'owner', // Only use one of type or affiliation
+        type: 'public', // Only fetch public repos
       });
       repos = data as Repository[];
       console.log('Repos:', repos);
@@ -152,9 +152,6 @@ export async function fetchGitHubUserData(accessToken: string) {
       twitterUsername: userData.twitter_username || '',
       publicRepos: userData.public_repos,
       publicGists: userData.public_gists,
-      privateRepos: (userData as any).private_repos ?? (userData as any).total_private_repos ?? 0,
-      totalPrivateRepos: (userData as any).total_private_repos ?? 0,
-      ownedPrivateRepos: (userData as any).owned_private_repos ?? 0,
       followers: userData.followers,
       following: userData.following,
       collaborators: (userData as any).collaborators ?? 0,

@@ -9,7 +9,6 @@ export interface IRepo {
   topics?: string[];
   forks?: number;
   watchers?: number;
-  isPrivate?: boolean;
   updatedAt?: string;
   createdAt?: string;
   size?: number;
@@ -44,7 +43,6 @@ export interface IGitHubPlan {
   name?: string;
   space?: number;
   collaborators?: number;
-  privateRepos?: number;
 }
 
 export interface IUser extends Document {
@@ -67,9 +65,6 @@ export interface IUser extends Document {
   // GitHub Stats
   publicRepos?: number;
   publicGists?: number;
-  privateRepos?: number;
-  totalPrivateRepos?: number;
-  ownedPrivateRepos?: number;
   followers?: number;
   following?: number;
   collaborators?: number;
@@ -129,9 +124,6 @@ const userSchema = new Schema<IUser>(
     // GitHub Stats
     publicRepos: { type: Number },
     publicGists: { type: Number },
-    privateRepos: { type: Number },
-    totalPrivateRepos: { type: Number },
-    ownedPrivateRepos: { type: Number },
     followers: { type: Number },
     following: { type: Number },
     collaborators: { type: Number },
@@ -141,7 +133,6 @@ const userSchema = new Schema<IUser>(
       name: { type: String },
       space: { type: Number },
       collaborators: { type: Number },
-      privateRepos: { type: Number }
     },
     
     // Content
@@ -156,7 +147,6 @@ const userSchema = new Schema<IUser>(
         topics: [String],
         forks: Number,
         watchers: Number,
-        isPrivate: Boolean,
         updatedAt: String,
         createdAt: String,
         size: Number,
