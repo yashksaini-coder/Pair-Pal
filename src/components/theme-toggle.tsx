@@ -1,13 +1,16 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useState } from "react"
+import { Moon, Sun } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+interface ThemeToggleProps {
+  className?: string
+}
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: ThemeToggleProps) {
+
   const { theme, setTheme } = useTheme();
   const isDarkMode = theme === "dark";
 
@@ -16,10 +19,60 @@ export function ThemeToggle() {
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <Sun className="h-[1.2rem] w-[1.2rem]" />
-      <Switch checked={isDarkMode} onCheckedChange={toggleTheme} />
-      <Moon className="h-[1.2rem] w-[1.2rem]" />
+    <div
+      className={cn(
+        "flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300",
+        isDarkMode 
+          ? "bg-zinc-950 border border-zinc-800" 
+          : "bg-white border border-zinc-200",
+        className
+      )}
+      onClick={toggleTheme}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="flex justify-between items-center w-full">
+        <div
+          className={cn(
+            "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300",
+            isDarkMode 
+              ? "transform translate-x-0 bg-zinc-800" 
+              : "transform translate-x-8 bg-gray-200"
+          )}
+        >
+          {isDarkMode ? (
+            <Moon 
+              className="w-4 h-4 text-white" 
+              strokeWidth={1.5}
+            />
+          ) : (
+            <Sun 
+              className="w-4 h-4 text-gray-700" 
+              strokeWidth={1.5}
+            />
+          )}
+        </div>
+        <div
+          className={cn(
+            "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300",
+            isDarkMode 
+              ? "bg-transparent" 
+              : "transform -translate-x-8"
+          )}
+        >
+          {isDarkMode ? (
+            <Sun 
+              className="w-4 h-4 text-gray-500" 
+              strokeWidth={1.5}
+            />
+          ) : (
+            <Moon 
+              className="w-4 h-4 text-black" 
+              strokeWidth={1.5}
+            />
+          )}
+        </div>
+      </div>
     </div>
-  );
+  )
 }

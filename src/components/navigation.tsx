@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { User, Users, MessageCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoutButton } from "@/components/auth-buttons";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const routes = [
