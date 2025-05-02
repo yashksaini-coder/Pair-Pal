@@ -29,39 +29,18 @@ function FooterSection() {
   return (
     <footer className="relative border-t bg-background text-foreground transition-colors duration-300">
       <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          <div className="relative">
-            <h2 className="mb-4 text-3xl font-bold tracking-tight">Stay Connected</h2>
-            <p className="mb-6 text-muted-foreground">
-              We are a community of people who are passionate about helping each other.
-            </p>
-            <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
+        <div className="grid gap-12 lg:gap-32 md:grid-cols-1 lg:grid-cols-2">
+          <div className="relative order-2 lg:order-2 flex lg:justify-end">
+            <div className="max-w-md w-full">
+              <h2 className="mb-4 text-3xl font-bold tracking-tight">Stay Connected</h2>
+              <p className="mb-6 text-muted-foreground">
+                We are a community of people who are passionate about helping each other.
+              </p>
+              <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
+            </div>
           </div>
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
-            <nav className="space-y-2 text-sm">
-              <a href="/" className="block transition-colors hover:text-primary">
-                Home
-              </a>
-              <a href="/swipe" className="block transition-colors hover:text-primary">
-                Swipe
-              </a>
-              <a href="/matches" className="block transition-colors hover:text-primary">
-                Matches
-              </a>
-            </nav>
-          </div>
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">Contact</h3>
-            <address className="space-y-2 text-sm not-italic">
-              <p>123 Innovation Street</p>
-              <p>Tech City, TC 12345</p>
-              <p>Phone: (123) 456-7890</p>
-              <p>Email: hello@example.com</p>
-            </address>
-          </div>
-          <div className="relative">
-            <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
+          <div className="relative order-1 lg:order-1">
+            <h3 className="mb-4 text-lg font-semibold">Follow on</h3>
             <div className="mb-6 flex space-x-4">
               <TooltipProvider>
                 <Tooltip>
