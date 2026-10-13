@@ -2880,8 +2880,8 @@ packages:
     resolution: {integrity: sha512-hJ2UlkFtwCihTtx8y5zBH6iuMYwz+W5v06GY7owDfFvTdAtMZMBfKzg7TjKegL+ehHw4CDIzZClJNKhwAD6Q0Q==}
     engines: {node: '>=18'}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
@@ -6839,7 +6839,7 @@ snapshots:
     dependencies:
       cheerio: 1.0.0-rc.11
 
-  lodash@4.17.21: {}
+  lodash@4.18.1: {}
 
   loose-envify@1.4.0:
     dependencies:
@@ -7105,7 +7105,7 @@ snapshots:
     dependencies:
       clsx: 2.1.1
       eventemitter3: 4.0.7
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       react-is: 18.3.1
