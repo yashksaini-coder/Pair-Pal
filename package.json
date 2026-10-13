@@ -49,7 +49,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.9.2",
     "input-otp": "^1.4.2",
-    "link-preview-js": "^3.0.14",
+    "link-preview-js": "^4.0.4",
     "lucide-react": "^0.503.0",
     "mongoose": "^8.14.0",
     "next": "15.5.24",
