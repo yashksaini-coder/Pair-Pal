@@ -135,8 +135,8 @@ importers:
         specifier: ^0.503.0
         version: 0.503.0(react@19.1.0)
       mongoose:
-        specifier: ^8.14.0
-        version: 8.14.0
+        specifier: ^8.24.1
+        version: 8.24.1
       next:
         specifier: 15.5.24
         version: 15.5.24(@types/node@20.17.32)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -439,8 +439,8 @@ packages:
   '@internationalized/string@3.2.6':
     resolution: {integrity: sha512-LR2lnM4urJta5/wYJVV7m8qk5DrMZmLRTuFhbQO5b9/sKLHgty6unQy1Li4+Su2DWydmB4aZdS5uxBRXIq2aAw==}
 
-  '@mongodb-js/saslprep@1.2.2':
-    resolution: {integrity: sha512-EB0O3SCSNRUFk66iRCpI+cXzIjdswfCs7F6nOC3RAGJ7xr5YhaicvsRwJ9eyzYvYRlCSDUO/c7g4yNulxKC1WA==}
+  '@mongodb-js/saslprep@1.6.0':
+    resolution: {integrity: sha512-19jGXfpctLDJUELLUZGJ5BllcLT7rHdF+gTTaN2jzqu0bGkUhpdcYtgK2Vux+g3zuBAa0TM/W666QMIjYhYujw==}
 
   '@next/env@15.5.24':
     resolution: {integrity: sha512-mBDF7T0XKZjs9SpUAl0buizVO+O02ULjOvWX8o/AZo/5AGw/UAS1Zzcylmd4pqbftzmKQi+L/nB4jgBYKEAl5Q==}
@@ -2546,8 +2546,8 @@ packages:
   bottleneck@2.19.5:
     resolution: {integrity: sha512-VHiNCbI1lKdl44tGrhNfU3lup0Tj/ZBMJB5/2ZbNXRCPuRCO7ed2mgcK4r17y+KB2EfuYuRaVlwNbAeaWGSpbw==}
 
-  bson@6.10.3:
-    resolution: {integrity: sha512-MTxGsqgYTwfshYWTRdmZRC+M7FnG1b4y7RO7p2k3X24Wq0yv1m77Wsj0BzlPzd/IowgESfsruQCUToa7vbOpPQ==}
+  bson@6.10.4:
+    resolution: {integrity: sha512-WIsKqkSC0ABoBJuT1LEX+2HEvNmNKKgnTAyd0fL8qzK4SH2i9NXg+t08YtdZp/V9IZ33cxe3iV4yM0qg8lMQng==}
     engines: {node: '>=16.20.1'}
 
   caniuse-lite@1.0.30001810:
@@ -2902,8 +2902,8 @@ packages:
   mongodb-connection-string-url@3.0.2:
     resolution: {integrity: sha512-rMO7CGo/9BFwyZABcKAWL8UJwH/Kc2x0g72uhDWzG48URRax5TCIcJ7Rc3RZqffZzO/Gwff/jyKwCU9TN8gehA==}
 
-  mongodb@6.16.0:
-    resolution: {integrity: sha512-D1PNcdT0y4Grhou5Zi/qgipZOYeWrhLEpk33n3nm6LGtz61jvO88WlrWCK/bigMjpnOdAUKKQwsGIl0NtWMyYw==}
+  mongodb@6.20.0:
+    resolution: {integrity: sha512-Tl6MEIU3K4Rq3TSHd+sZQqRBoGlFsOgNrH5ltAcFBV62Re3Fd+FcaVf8uSEQFOJ51SDowDVttBTONMfoYWrWlQ==}
     engines: {node: '>=16.20.1'}
     peerDependencies:
       '@aws-sdk/credential-providers': ^3.188.0
@@ -2911,7 +2911,7 @@ packages:
       gcp-metadata: ^5.2.0
       kerberos: ^2.0.1
       mongodb-client-encryption: '>=6.0.0 <7'
-      snappy: ^7.2.2
+      snappy: ^7.3.2
       socks: ^2.7.1
     peerDependenciesMeta:
       '@aws-sdk/credential-providers':
@@ -2929,8 +2929,8 @@ packages:
       socks:
         optional: true
 
-  mongoose@8.14.0:
-    resolution: {integrity: sha512-IxDxIUu42apE7oEknJK535xkQ6Gd7GKx/gNrNHY+vP4+ucVU2TOCWjVVW14Vc79y9DEEElzHDlTOuVNM8glUFA==}
+  mongoose@8.24.1:
+    resolution: {integrity: sha512-UpHBA0l5kHyKJQFjmBaFYQFo5sgz1DK0TRqDkOyBLYbqiIbKKhIvBpHWBXqeo0rgW4kGI1UhhAw+kTQZoj1BdA==}
     engines: {node: '>=16.20.1'}
 
   motion-dom@12.9.1:
@@ -3537,7 +3537,7 @@ snapshots:
     dependencies:
       '@swc/helpers': 0.5.23
 
-  '@mongodb-js/saslprep@1.2.2':
+  '@mongodb-js/saslprep@1.6.0':
     dependencies:
       sparse-bitfield: 3.0.3
 
@@ -6517,7 +6517,7 @@ snapshots:
 
   '@types/mongoose@5.11.97':
     dependencies:
-      mongoose: 8.14.0
+      mongoose: 8.24.1
     transitivePeerDependencies:
       - '@aws-sdk/credential-providers'
       - '@mongodb-js/zstd'
@@ -6556,7 +6556,7 @@ snapshots:
 
   bottleneck@2.19.5: {}
 
-  bson@6.10.3: {}
+  bson@6.10.4: {}
 
   caniuse-lite@1.0.30001810: {}
 
@@ -6865,17 +6865,17 @@ snapshots:
       '@types/whatwg-url': 11.0.5
       whatwg-url: 14.2.0
 
-  mongodb@6.16.0:
+  mongodb@6.20.0:
     dependencies:
-      '@mongodb-js/saslprep': 1.2.2
-      bson: 6.10.3
+      '@mongodb-js/saslprep': 1.6.0
+      bson: 6.10.4
       mongodb-connection-string-url: 3.0.2
 
-  mongoose@8.14.0:
+  mongoose@8.24.1:
     dependencies:
-      bson: 6.10.3
+      bson: 6.10.4
       kareem: 2.6.3
-      mongodb: 6.16.0
+      mongodb: 6.20.0
       mpath: 0.9.0
       mquery: 5.0.0
       ms: 2.1.3
